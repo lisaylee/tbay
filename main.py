@@ -1,4 +1,4 @@
-from tbay import User, Item, Bid 
+from tbay import User, Item, Bid, session, engine
 
 # session.query(User).all()
 
@@ -15,27 +15,36 @@ from tbay import User, Item, Bid
 def main():
 
 	# add users
-	beyonce = User(username = "bknowles", password = "xyz")
+	beyonce = User(username = "bknowles", password = "xyz")	
 	ariana = User(username = "agrande", password = "abc")
 	miley = User(username = "mcyrus", password = "def")
+	session.add_all([beyonce, ariana, miley])
+	session.commit()
 
 	# Make one user auction a baseball
 	baseball = Item(name="baseball", description="Baseball from Babe Ruth's first home run", seller=ariana)
-	session.add(baseball)
+	session.add(baseball)		
 	session.commit()
-	print("{} started an auction for {} at {}".format(baseball.owner.username, baseball.name, baseball.start_time))
+	print("{} started an auction for {} at {}".format(baseball.seller, baseball.name, baseball.start_time))
 
 
 	# Have each other use two bids on the baseball
-	bknowles_bid = bid(price=150.00, item=baseball, user=bknowles)
-	mcyrus_bid = bid(price=200.00, item=baseball, user=mcyrus)
+	starting_bid = Bid(price=100.00, item_id=baseball.id, bidder=ariana)
+	bknowles_bid = Bid(price=150.00, item_id=baseball.id, bidder=beyonce)
+	mcyrus_bid = Bid(price=200.00, item_id=baseball.id, bidder=miley)
 	
-	session.add_all([beyonce, ariana, miley, bknowles_bid, mcyrus_bid])
+	bid_list = [bknowles_bid, mcyrus_bid]
+	session.add_all([starting_bid, bknowles_bid, mcyrus_bid])
 	session.commit()
 
+	for x in bid_list:
+		print("{} placed a bid on a {} for {}".format(bids.bidder.username, baseball.name, baseball.price))
+
 	# Perform a query to find out which user placed the highest bid
-	highest_bid = session.query(bid).order_by(desc(bid.price))
+	highest_bid = session.query(Bid).order_by(Bid.price.desc()).first()
 	print("{} had the highest bid at ${}".format(highest_bid.bidder.username, highest_bid.price))
 
-	if __name__ == "__main__":
-  		main()
+if __name__ == "__main__":
+  	main()
+
+

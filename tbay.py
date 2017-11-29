@@ -25,9 +25,9 @@ class Item(Base):
 
     # relationships
 
-    seller_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    seller_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-    bids = relationship("bid", backref="item")
+    bids = relationship("Bid", backref="item")
 
 # User model
 class User(Base):
@@ -41,9 +41,9 @@ class User(Base):
 
 	# relationships
 
-	items = relationship("item", backref = "seller")
+	items = relationship("Item", backref = "seller")
 	
-	bids = relationship("bid", backref="bidder")
+	bids = relationship("Bid", backref="bidder")
 
 # Bid model
 class Bid(Base):
@@ -51,18 +51,16 @@ class Bid(Base):
 
 	# table columns
 
-	id = Column(Integer, primary_key=True)
+	id = Column(Integer, primary_key=True) 
 	price = Column(Float, nullable = False)
 
-	# relationships
-
-	bidder_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-	
-	item_id = Column(Integer, ForeignKey('item.id'), nullable=False)
+	# relationships	
+	item_id = Column(Integer, ForeignKey('items.id'), nullable=False)
+	bidder_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
 Base.metadata.create_all(engine)
 
 ### CHALLENGE
 # Users should be able to auction multiple items (one to many)user, item
-# Users should be able to bid on multiple items (one to many)bid, item
+# Users should be able to bid on multiple items (one to many)user [bidder], item
 # Multiple users should be able to place a bid on an item (one to many), user, bid
