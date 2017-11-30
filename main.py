@@ -25,20 +25,20 @@ def main():
 	baseball = Item(name="baseball", description="Baseball from Babe Ruth's first home run", seller=ariana)
 	session.add(baseball)		
 	session.commit()
-	print("{} started an auction for {} at {}".format(baseball.seller, baseball.name, baseball.start_time))
+	print("{} started an auction for {} at {}".format(baseball.seller, baseball.name, baseball.start_time.strftime('%m/%d/%y')))
 
 
 	# Have each other use two bids on the baseball
-	starting_bid = Bid(price=100.00, item_id=baseball.id, bidder=ariana)
-	bknowles_bid = Bid(price=150.00, item_id=baseball.id, bidder=beyonce)
-	mcyrus_bid = Bid(price=200.00, item_id=baseball.id, bidder=miley)
+	starting_bid = Bid(price=100.00, item=baseball, bidder=ariana)
+	bknowles_bid = Bid(price=150.00, item=baseball, bidder=beyonce)
+	mcyrus_bid = Bid(price=200.00, item=baseball, bidder=miley)
 	
 	bid_list = [bknowles_bid, mcyrus_bid]
 	session.add_all([starting_bid, bknowles_bid, mcyrus_bid])
 	session.commit()
 
-	for x in bid_list:
-		print("{} placed a bid on a {} for {}".format(bids.bidder.username, baseball.name, baseball.price))
+	for bid in bid_list:
+		print("{} placed a bid on a {} for {}".format(bid.bidder, bid.item, bid.price))
 
 	# Perform a query to find out which user placed the highest bid
 	highest_bid = session.query(Bid).order_by(Bid.price.desc()).first()

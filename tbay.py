@@ -29,6 +29,9 @@ class Item(Base):
 
     bids = relationship("Bid", backref="item")
 
+    def __repr__(self):
+    	return self.name
+
 # User model
 class User(Base):
 	__tablename__ = "users"
@@ -44,6 +47,9 @@ class User(Base):
 	items = relationship("Item", backref = "seller")
 	
 	bids = relationship("Bid", backref="bidder")
+
+	def __repr__(self):
+		return self.username
 
 # Bid model
 class Bid(Base):
